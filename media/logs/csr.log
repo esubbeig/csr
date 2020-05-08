@@ -1,0 +1,10 @@
+[2020-05-06 15:09:26] INFO [csr.generate_csr:1986] Generate CSR started for project - 'one' by - esub
+[2020-05-06 15:09:34] INFO [csr.generate_csr:2008] Generate CSR completed for project - 'one' by - esub
+[2020-05-06 15:09:45] INFO [csr.generate_csr:1986] Generate CSR started for project - 'one' by - esub
+[2020-05-06 15:09:56] INFO [csr.generate_csr:2008] Generate CSR completed for project - 'one' by - esub
+[2020-05-06 15:13:26] INFO [csr.generate_csr:1986] Generate CSR started for project - 'one' by - esub
+[2020-05-06 15:13:38] INFO [csr.generate_csr:2008] Generate CSR completed for project - 'one' by - esub
+[2020-05-06 15:21:14] INFO [csr.generate_csr:1986] Generate CSR started for project - 'one' by - esub
+[2020-05-06 15:21:25] INFO [csr.generate_csr:2008] Generate CSR completed for project - 'one' by - esub
+[2020-05-06 15:21:34] INFO [csr.generate_csr:1986] Generate CSR started for project - 'one' by - esub
+[2020-05-06 15:21:45] INFO [csr.generate_csr:2008] Generate CSR completed for project - 'one' by - esub

@@ -1,0 +1,44 @@
+<form method="post" enctype="multipart/form-data" data-url="{% url 'another_file_upload' user.id proj.id %}" class="upload_another_doc_usr_form">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title" id="upload_another_doc_usr_modalLabel">Upload {{ is_another_doc_available.source_name }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+  
+        <p class="text-danger" id="error_format">{{ form.errors.another_document_location | striptags }}</p>
+
+       
+
+    <small class="sml__hint">Upload .docx file</small>
+    <div class="upload__brdr">
+      <div class="upload-btn-wrapper">
+        <button class="btn__" id="dispaly_f_name">Choose File</button>
+        <input type="file" name="another_document_location" required id="id_another_document_location" />
+      </div>
+    </div>
+
+    <div class="form_wrp">
+      <small class="sml__hint">Version</small>
+      <label class="radio-inline"><input type="radio" name="version" value="0.1" checked><span>Minor</span></label>
+      <label class="radio-inline"><input type="radio" name="version" value="1.0"><span>Major</span></label>
+    </div>
+
+    <small class="sml__hint">Write Comments</small>
+    <div class="form_wrp">      
+      <input type="text" name="comments" maxlength="512" id="id_comments" class="input_cn" placeholder="Comments">
+      <small class="text-danger">{{ form.errors.comments | striptags }}</small>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+     <button type="submit" class="frm_btn__">Upload {{ is_another_doc_available.source_name }}</button>  
+  </div>
+
+</form>

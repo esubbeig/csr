@@ -1,0 +1,49 @@
+<table class="table table-hover table-striped table-bordered" id="admin_users">
+                	<thead class="thead-dark">  
+                    <tr>
+                    <th>User Name</th>
+                    <th class="no-sort">No. of Projects  </th>
+                    <th class="no-sort">Status </th>
+                    <th class="no-sort">Action</th> 
+                    
+                  </tr></thead>
+                  <tbody>
+                  	{% for usr in users %}
+  						        {% if usr.username != user.username %}
+                   			<tr>
+                      			<td>{{ usr.username }}</td>
+                      			<td>
+                              {% for i in proj_count %}
+                                  {% if i.user.id == usr.id %}
+                                    {{ i.project_count }}
+                                  {% endif %}
+                              {% endfor %}
+                            </td>
+                            <td>
+                              {% if usr.is_active %}
+                      
+                                <span class="badge badge-brd-primary">Active</span>
+                      
+                              {% else %}
+                     
+                                <span class="badge badge-disable">Disabled</span>
+                      
+                              {% endif %}
+                            </td>
+                      			<td>
+                      			
+                            {% if usr.is_active %}
+                              <a href="{% url 'deactivate_user' usr.id %}">
+                              <span class="badge badge-danger">Deactivate</span>
+                              </a>
+                            {% else %}
+                              <a href="{% url 'activate_user' usr.id %}">
+                              <span class="badge badge-success">Activate</span>
+                              </a>
+                            {% endif %}
+                   					</td>
+                      	</tr>
+                      {% endif %}
+  					        {% endfor %}
+  			 	        </tbody>
+                </table>

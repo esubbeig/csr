@@ -1,0 +1,153 @@
+{% load static %}
+
+<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo ml-3" href="{% url 'home' %}"><img src="{% static 'images/logo.png' %}" class="mr-2" alt="CSR Automation"/></a>
+        
+        <a class="navbar-brand brand-logo-mini" href="#"><img src="{% static 'images/logo-mini.png' %}" alt="logo"/></a>
+        
+      </div>
+
+      
+      <div class="b-l-1 navbar-menu-wrapper d-flex align-items-center justify-content-end">
+      {% if user.is_authenticated %}
+       
+        {% if user.is_superuser %}
+            <ul class="navbar-nav mr-lg-2 menu__">
+              <li>
+                <a href="{% url 'home' %}">
+                  <i class="icons__ proj__"></i>
+                  <span>PROJECTS</span> 
+                </a> 
+              </li>
+              <li>
+                <a href="{% url 'get_all_users_details' %}">
+                  <i class="icons__  user__"></i>
+                  <span>USERS</span> 
+                </a> 
+              </li>
+              <li>
+                <a href="{% url 'global_csr_upload' latest_client.id %}">
+                  <i class="icons__ uplo__" ></i>
+                  <span>UPLOAD CSR</span> 
+                </a>
+              </li>
+                
+
+          </ul>
+
+        {% else %}
+
+          <ul class="navbar-nav mr-lg-2 menu__">
+              <li>
+                <a href="{% url 'home' %}">
+                  <i class="icons__ proj__"></i>
+                  <span>PROJECTS</span> 
+                </a> 
+              </li>
+              <li>
+                <a href="{% url 'display_global_csr_mapping' latest_client.id %}">
+                  <i class="icons__ mapping__"></i>
+                  <span>Global CSR Mapping</span> 
+                </a> 
+              </li> 
+
+               <li>
+               
+              </li>
+               
+            </ul>
+
+        {% endif %}
+        <ul class="navbar-nav navbar-nav-right ">
+          
+          
+          
+          {% if user.is_superuser %}
+
+            <li class="nav-item clr__w">Welcome {{ user.username }} (Admin) <br>
+            {{ user.last_login }}</li>
+
+            <li class="gap-r-10 ">
+            <div class="dropdown_settings">
+               <a  class="settings"> 
+              <img src="{% static 'images/settings.png'%}" class="profile-circle"/>
+              </a>
+              <div class="submenu" style="display: none; ">
+              <ul class="root">
+              <li >
+                <a href="{% url 'audit_log' user.id %}">Audit Log</a> 
+              </li>
+              <li >
+              <a href="{% url 'activity_log' user.id %}">Activity Log</a>
+              </li>
+              <li >
+              <a data-href="{% url 'email_configuration' %}" id="email_configuration_link" data-target="#email_configuration_modal" data-toggle="modal">Email Configuration</a> 
+              </li>
+              <li >
+              <a data-href="{% url 'add_client' %}" id="add_client_link" data-target="#add_client_modal" data-toggle="modal">Add Client</a> 
+              </li>
+              <li>
+              <a href="{% url 'mail_logs' %}">Email Log</a> 
+              </li>
+              <li >
+              <a href="{% url 'display_logging' %}">App Log</a>
+              </li>
+              <li>
+              <a data-href="{% url 'change_password' %}" class=" " id="change_password_link" data-target="#change_password_modal" data-toggle="modal"> Change Password 
+            </a>
+              </li>
+              </ul>
+              </div>
+
+            </div>
+          </li>
+
+          {% else %}
+
+            <li class="nav-item clr__w">Welcome {{ user.username }}<br>
+            {{ user.last_login }}</li>
+
+            <li class="gap-r-10 ">
+            <div class="dropdown_settings">
+               <a  class="settings"> 
+              <img src="{% static 'images/settings.png'%}" class="profile-circle"/>
+              </a>
+              <div class="submenu" style="display: none; ">
+              <ul class="root">
+              <li >
+                <a href="{% url 'audit_log' user.id %}">Audit Log</a> 
+              </li>
+              <li >
+              <a href="{% url 'activity_log' user.id %}">Activity Log</a>
+              </li>
+              
+              <li>
+              <a data-href="{% url 'change_password' %}" class="" id="change_password_link" data-target="#change_password_modal" data-toggle="modal"> Change Password 
+            </a>
+              </li>
+              </ul>
+              </div>
+
+            </div>
+          </li>
+
+          {% endif %}
+
+          
+
+
+            </a>
+      <li class="gap-r-10 ">
+            
+          </li>
+          <li><a href="{% url 'logout' %}" class="logout__"><i class="ti-power-off "></i></a></li>
+
+        </ul>
+       
+
+      
+      {% endif %}
+
+      </div>
+    </nav>

@@ -1,0 +1,114 @@
+{% extends 'admin_home.html' %}
+
+{% block admin_content %}
+  {% load static %}
+	<div class="container-fluid page-body-wrapper"> 
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="d-flex justify-content-between align-items-center">
+                
+                  <div>
+
+                    <h4 class="mb-0 breadcrumb_">Projects</h4>
+                    <a href="{% url 'home' %}" class="bread__lnk">Home </a> / <label class="bread__lnk">Projects</label>
+                  </div>
+
+                
+                <div>
+                     <button type="button" class="new_sub create__prj" data-href="{% url 'create_project' user.id %}" data-toggle="modal" data-target="#create_project_modal" id="project_create_form">
+                      <i class="btn__icons creproj__"></i>
+                    
+                    <span>Create Project</span>
+                  </button>
+                
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+            {% if projects %}
+              
+                <table class="table table-hover table-striped table-bordered" id="admin_projects_tbl">
+              
+              
+              <thead class="thead-dark">  <tr>
+                  <th>Project Name</th>
+                  <th>Protocol ID </th>
+                  <th class="no-sort">Therapeutic Area</th>
+                  <th class="no-sort">Phase</th>
+                  <th class="no-sort">Client Name </th>
+                  <th>Updated On </th>
+                  <th class="no-sort">Created By </th>
+                  <th class="no-sort">CSR Generated</th> 
+                  <th class="no-sort">Assign To </th> 
+                
+                  
+                </tr></thead>
+                <tbody id="id_admin_projects">
+                  
+                  {% for proj in projects %}
+                    <tr>
+                      <td><b>{{ proj.project_name }}</b></td>
+                      <td>{{ proj.protocol_id }}</td>
+                      <td>{{ proj.therapeutic_area.therapeutic_area }}</td>
+                      <td>{{ proj.phase }}</td>
+                      <td>{{ proj.client.client_name }}</td>
+                      <td>{{ proj.updated_on|date:"d/m/Y H:i" }}</td>
+                      <td>{{ proj.created_by }}</td>
+                      <td>
+                        {% if proj.generated == True %}
+                          Generated
+                        {% else %}
+                          Not Generated
+                        {% endif %}
+                      </td>
+                      <td>
+                        
+                        <button type="button" class="assign__pro project_assigning" data-href="{% url 'assign_project' proj.id %}" data-toggle="modal" data-target="#assign_project_modal-{{ proj.id }}" id="project_assign_form"> 
+                           <span>Assign Project</span>
+                        </button>
+                        
+                      </td> 
+                      
+                    </tr>
+                  {% endfor %}
+
+
+
+                </tbody>
+
+                  
+                </table> 
+                {% else %}
+
+                 <div class="no_res"> No Projects Available</div>
+
+                {% endif %}
+            </div>
+          </div>
+          <!-- Create Project Modal -->
+          <div class="modal fade" id="create_project_modal" tabindex="-1" role="dialog" aria-labelledby="create_project_modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+              </div>
+            </div>
+          </div>
+          <!-- Assign project Modal -->
+          {% for proj in projects %}
+            <div class="modal fade assign_project_modal" id="assign_project_modal-{{ proj.id }}" tabindex="-1" role="dialog" aria-labelledby="assign_project_modalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+        </div>
+        </div>
+    </div>
+
+{% endblock %}

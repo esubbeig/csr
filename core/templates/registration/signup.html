@@ -1,0 +1,41 @@
+<form  method="POST" data-url="{% url 'add_user' %}" class="create_user_form">
+
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title" id="create_user_modalLabel">Add New User</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+       
+    <div class="form_wrp">
+    <input type="text" class="input_cn" placeholder="Enter User Name" name="username" maxlength="15" autofocus required id="id_username" minlength='3' pattern="[A-Za-z0-9]+" title="contains only [A-Za-z0-9]">
+    <small class="text-danger">{{ form.errors.username | striptags }}</small>
+    </div>
+
+    <div class="form_wrp">
+    <input type="text" class="input_cn" placeholder="Enter Name" name="first_name" maxlength="15" required id="id_first_name">
+    <small class="text-danger">{{ form.errors.first_name | striptags }}</small>
+    </div>
+    
+    <div class="form_wrp">
+    <input type="tel" class="input_cn" placeholder="Mobile Number" name="mobile" maxlength="10" required id="id_mobile" pattern="^\d{10}$" title="Mobile number with 10 digits (xxxxxxxxxx)">
+    <span id="message"></span>
+    </div>
+
+    <div class="form_wrp">
+    <input type="email"class="input_cn" placeholder="Enter Email" name="email" maxlength="254" required id="id_email">
+    <small class="text-danger">{{ form.errors.email | striptags }}</small>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+
+    <button type="submit" class="frm_btn__">Save changes <span class="spinner-border spinner-border-sm" id="spin_loader" style="display: none" role="status" aria-hidden="true"></span></button>
+  </div>
+    
+</form>
+

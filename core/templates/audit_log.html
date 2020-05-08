@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<div class="container page-body-wrapper">
+		<div class="main-panel">
+        	<div class="content-wrapper">
+
+          		<div class="row">
+            		<div class="col-md-12 grid-margin">
+              			<div class="d-flex justify-content-between align-items-center">
+                			<div>
+                  				<h4 class="mb-0 breadcrumb_">Audit Log</h4>
+                    			<a href="{% url 'home' %}" class="bread__lnk">Home </a> / <label class="bread__lnk" id="audit_log_bread">{{ req_user.username }}</label>
+                			</div>
+                            {% if user.is_superuser %}
+
+                                {% if users %}
+
+                                    <div>
+                                         
+                                            <select class="custom-select" id="audit_log_on_change">
+
+                                                {% for usr in users %}
+                                                    <option value="{% url 'audit_log' usr.id %}" {% if usr.id == req_user.id %} selected {% endif %}>{{ usr.username }}</option>
+                                                {% endfor %}
+                                              
+                                            </select>
+                                         
+                                    </div>
+
+                                {% endif %}
+
+                            {% endif %}
+                			
+            			</div>
+        			</div>
+    			</div>
+
+    			
+
+    			<div class="row">
+            		<div class="col-md-12 grid-margin stretch-card" id="audit_log_data">
+                        {% if user.is_superuser %}
+
+                            {% if audit_logs %}
+
+                                <table class="table table-hover table-striped table-bordered tbl_mx" id="audit_logs">
+                                    <thead class="thead-dark">
+                                        <tr>
+
+                                        <th class="no-sort">Action</th>
+                                        <th class="no-sort">Changed From</th>
+                                        <th class="no-sort">Changed To</th>
+                                        <th class="no-sort">Changed By</th>
+                                        <th>Changed On</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for log in audit_logs %}
+
+                                            <tr>
+                                                
+                                                <td>{{ log.action }}</td>
+                                                <td>{{ log.previous_state }}</td>
+                                                <td>{{ log.current_state }}</td>
+                                                <td>{{ log.user.username }}</td>
+                                                <td>{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+                                                
+                                            </tr>
+
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+
+                                
+                                
+                            {% else %}
+
+                                <div class="no_res"> No Result Found </div>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if audit_logs %}
+
+                                <table class="table table-hover table-striped table-bordered tbl_mx" id="audit_logs">
+                                    <thead class="thead-dark">
+                                        <tr>
+
+                                        <th>Project Name</th>
+                                        <th class="no-sort">Action</th>
+                                        <th class="no-sort">Changed From</th>
+                                        <th class="no-sort">Changed To</th>
+                                        <th class="no-sort">Changed By</th>
+                                        <th>Changed On</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for log in audit_logs %}
+
+                                            <tr>
+
+                                                <td>{{ log.project.project_name }}</td>
+                                                <td>{{ log.action }}</td>
+                                                <td>{{ log.previous_state }}</td>
+                                                <td>{{ log.current_state }}</td>
+                                                <td>{{ log.user.username }}</td>
+                                                <td>{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+                                                
+                                            </tr>
+
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+
+                            {% else %}
+
+                                <div class="no_res"> No Result Found </div>
+
+                            {% endif %}
+
+                        {% endif %}
+            		</div>
+            	</div>
+
+            	
+
+			</div>
+		</div>
+	</div>
+
+
+
+{% endblock %}

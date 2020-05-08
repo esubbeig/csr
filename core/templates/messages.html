@@ -1,0 +1,36 @@
+{% if messages %}
+
+      {% for message in messages %}
+
+        {% if message.tags == 'success' %}
+
+            <div class="alert alert-success alert-dismissible fixed_errormsg" role="alert" id="error-message">
+              <button type="submit" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              {{ message }}
+            </div>
+
+        {% elif message.tags == 'info' %}
+
+            <div class="alert alert-warning alert-dismissible fixed_errormsg" role="alert" id="error-message">
+              <button type="submit" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              {{ message }}
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-danger alert-dismissible fixed_errormsg" role="alert" id="error-message">
+              <button type="submit" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              {{ message }}
+            </div>
+
+        {% endif %}
+
+      {% endfor %}
+
+{% endif %}

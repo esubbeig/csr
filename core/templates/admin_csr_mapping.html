@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	
+	<div class="container page-body-wrapper"> 
+      	<div class="main-panel">
+        	<div class="content-wrapper">
+
+          		<div class="row">
+            		<div class="col-md-12 grid-margin">
+              			<div class="d-flex justify-content-between align-items-center">
+                			<div class="col-md-5 nopads">
+                          <a class="back_btn__" href="{% url 'global_csr_upload' req_client.id %}"><i class="ti-arrow-left"></i></a>
+                  				<h4 class="mb-0 breadcrumb_">Map CSR</h4>
+                    			<a href="{% url 'home' %}" class="bread__lnk">Home </a>/<a href="{% url 'global_csr_upload' req_client.id %}" class="bread__lnk"> Upload CSR  </a>/ <label class="bread__lnk"> Map CSR </label>
+                			</div>
+              			</div>
+            		</div>
+          		</div>
+
+
+          	 <div class="row">
+                <div class="col-md-12 grid-margin">
+                <form method="post" id="admin-csr-mapping-form" data-url="{% url 'confirm_csr_mapping_admin' req_client.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="" value="{{ csr_headings }}" id="hidden_csr_headings">
+          			  <table class="table table-hover tbl_mx">
+             <thead class="thead-dark ">
+          					
+
+                  {% if pre_mapped_headings %}
+
+                    <tr>
+                      <th>CSR Heading</th>
+                      <th>Source</th>
+                      <th>Source Heading</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for i in pre_mapped_headings %}
+
+                      {% if i.csr_heading == i.parent_id %}
+
+                      <tr class="no-brd" id='record-{{ forloop.counter }}'>
+
+                      {% else %}
+
+                      <tr id='record-{{ forloop.counter }}'>
+
+                      {% endif %}
+
+                        <td>
+                          <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i.csr_heading }}">
+                          
+                          {% if i.csr_heading == i.parent_id %}
+
+                          <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i.csr_heading }}">
+                          <input class="form-control csr_heading" type="hidden" readonly value="{{ i.csr_heading }}" id="csr-heading-{{ forloop.counter }}" name="csr_headings[]">
+
+                          {% else %}
+                          <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+                          <input class="form-control csr_heading" type="text" readonly value="{{ i.csr_heading }}" id="csr-heading-{{ forloop.counter }}" name="csr_headings[]">
+                          {% endif %}
+                        </td>
+
+                        
+
+                        <td>
+                          <!-- Source -->
+                          <select class="form-control source_file_select" data-target="#copy-heading-{{ forloop.counter }}" name="source[]" id="source-{{ forloop.counter }}">
+                              
+                            <option value="">Source</option>
+                            {% if protocol_headings and sar_headings %}
+
+                              <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                              <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                            {% else %}
+
+                              {% if protocol_headings %}
+
+                                <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+
+                              {% elif sar_headings %}
+
+                               <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                              {% endif %}
+
+                            {% endif %}
+                            
+                            
+
+                          </select>
+                        </td>
+                        <td>
+                          <!-- Source Headings -->
+                          {% if i.source_file == 'Protocol' %}
+                            
+                            <select class="form-control source_file_headings" id="copy-heading-{{ forloop.counter }}" name="copy_headings[]">
+
+                              <option value="">------</option>
+                              {% for j in protocol_headings %}
+
+                                <option value="{{ j }}" {% if i.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                              {% endfor %}
+
+                              </select>
+
+                            {% endif %}
+                            {% if i.source_file == 'SAR' %}
+
+                             <select class="form-control source_file_headings" id="copy-heading-{{ forloop.counter }}" name="copy_headings[]">
+
+                              <option value="">------</option>
+                              {% for j in sar_headings %}
+
+                                <option value="{{ j }}" {% if i.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                              {% endfor %}
+
+                              </select>
+
+                            {% endif %}
+
+                            {% if i.source_file != 'Protocol' and i.source_file != 'SAR' %}
+
+                                <select class="form-control source_file_headings" id="copy-heading-{{ forloop.counter }}" name="copy_headings[]">
+
+                            <option value="">------</option>
+
+                          </select>
+
+                            {% endif %}
+                        </td>
+                        <!-- <td>
+                          <input type="button" class="remove_record" value="" >
+                        </td> -->
+                        <td>
+                          <!-- <input type="button" class="add_record_prem" data-target="#csr-heading-{{ forloop.counter }}" value=" " > -->
+                          {% if i.csr_heading == i.parent_id %}
+
+                          <input type="button" class="remove_record" value="" >
+
+                          {% else %}
+                            <input type="button" class="add_record_prem" data-target="#record-{{ forloop.counter }}" value=" " >
+
+                          {% endif %}
+                        </td>
+
+                      </tr>
+
+                    {% endfor %}
+<!-- ----------------------------------------------------------------------------------------- -->
+                  {% else %}
+
+                    <tr>
+                      <th>CSR Heading</th>
+                      <th>Source</th>
+                      <th>Source Heading</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+          					{% for i in csr_headings %}
+	          					<tr id='record-{{ forloop.counter }}'>
+
+	          						<td>
+
+                          <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i.csr_heading }}">
+
+                          <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                          <input class="form-control csr_heading" type="text" readonly value="{{ i }}" id="csr-heading-{{ forloop.counter }}" name="csr_headings[]">
+                        </td>
+
+	          						<td>
+	          							<select class="form-control source_file_select" data-target="#copy-heading-{{ forloop.counter }}" name="source[]" id="source-{{ forloop.counter }}">
+
+	          								<option value="">Source</option>
+                            {% if protocol_headings and  sar_headings %}
+
+                              <option value="Protocol">Protocol</option>
+                              <option value="SAR">SAR</option>
+
+                            {% else %}
+
+                              {% if protocol_headings %}
+
+                                <option value="Protocol">Protocol</option>
+
+                              {% elif sar_headings %}
+
+                                <option value="SAR">SAR</option>
+
+                              {% endif %}
+
+                            {% endif %}
+	          								
+
+	          							</select>
+	          						</td>
+
+	          						<td>
+                          <select class="form-control source_file_headings" id="copy-heading-{{ forloop.counter }}" name="copy_headings[]">
+
+                            <option value="">------</option>
+
+                          </select>
+	          						</td>
+                        <td>
+                          <input type="button" class="add_record" data-target="#record-{{ forloop.counter }}" value=" " >
+                        </td>
+                        
+	          					</tr>
+          					{% endfor %}
+
+                  {% endif %}
+
+          				</tbody>
+          			</table>
+      <div class="row__btm">
+                {% if pre_mapped_headings %}
+
+                  <input type="hidden" id="records_length" value="{{ pre_mapped_headings|length }}" />
+
+                {% else %}
+
+                  <input type="hidden" id="records_length" value="{{ csr_headings|length }}" />
+
+                {% endif %}
+
+                <input type="hidden" id="protocol_headings_length" value="{{ protocol_headings|length }}" />
+                <input type="hidden" id="sar_headings_length" value="{{ sar_headings|length }}" />
+
+                <input type="hidden" id="protocol_headings_list" value="{{ protocol_headings_json }}" />
+                <input type="hidden" id="sar_headings_list" value="{{ sar_headings_json }}" />
+
+                <!-- <input type="reset" class="reset__mapping" value="Reset" /> -->
+                <input type="button" name="" id="edit_mapping_admin_btn" class="save__mapping" value="Save Mapping" data-target="#confirm_admin_mapping_modal" data-toggle="modal" />
+
+
+
+                <!-- confirm mapping modal -->
+                 
+                  <div class="modal fade" id="confirm_admin_mapping_modal" tabindex="-1" role="dialog" aria-labelledby="confirm_admin_mapping_modalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+
+                </form>
+
+          		</div></div>
+
+
+
+          	</div>
+        </div>
+    </div>
+
+
+{% endblock %}

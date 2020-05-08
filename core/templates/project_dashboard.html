@@ -1,0 +1,645 @@
+{% extends 'user_home.html' %}
+
+{% block user_content %}
+
+	<div class="container-fluid page-body-wrapper">
+    <div class="main-panel">
+      <div class="content-wrapper">
+
+        <div class="row">
+          <div class="col-md-12 nopads grid-margin">
+            <div class="d-flex justify-content-between align-items-center">
+
+              <div class="col-md-3 nopads">
+                <a class="back_btn__" href="{% url 'home' %}"><i class="ti-arrow-left"></i></a>
+                <h4 class="mb-0 breadcrumb_">{{ projects.project_name }}</h4>
+                <a href="{% url 'home' %}" class="bread__lnk">Home </a> / <a href="{% url 'home' %}" class="bread__lnk">Projects </a> / <label class="bread__lnk">{{ projects.protocol_id }}</label>
+              </div>
+
+              <div>
+
+                <!-- {% if is_another_doc_available == None and csr_doc_latest != None and protocol_doc_latest != None and sar_doc_latest != None %}
+                  <button type="button" class="new_sub add__anotherdoc r-ali"  id="add_another_document__usr" data-toggle="modal" data-target="#add_another_document__usr_modal" >Add New Doc</button>
+                {% endif %} -->
+
+                {% if is_another_doc_available == None %}
+                  <button type="button" class="new_sub add__anotherdoc r-ali"  id="add_another_document__usr" data-toggle="modal" data-target="#add_another_document__usr_modal" >Add New Doc</button>
+                {% endif %}
+
+                {% if csr_doc_latest != None and protocol_doc_latest != None or sar_doc_latest != None or another_doc_latest != None %}
+
+                  <button type="button" class="new_sub clear__config r-ali" data-href="{% url 'clear_configurations__usr' user.id projects.id %}" id="clear_configurations__usr">Clear Configurations</button>
+
+                {% elif custom_csr_doc_latest != None or protocol_doc_latest != None or sar_doc_latest != None %}
+
+                  <button type="button" class="new_sub clear__config r-ali" data-href="{% url 'clear_configurations__usr' user.id projects.id %}" id="clear_configurations__usr">Clear Configurations</button>
+
+                {% else %}
+
+                  <button type="button" class="new_sub clear__config r-ali" id="disabled-clr-config-admin-btn">Clear Configurations</button>
+
+                {% endif %}
+
+              </div>
+              
+             
+
+            </div>
+          </div>
+        </div>
+
+       <div class="row">       
+
+               <table class="table table-hover table-striped table-bordered ">
+
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Documents</th>
+                      <th>Current Version</th>
+                      <th>Uploaded By</th>
+                      <th>Uploaded On</th>
+                      <th>Remarks</th>
+                      <th>Other Versions</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr>
+                      {% if custom_csr_doc_latest %}
+
+                        <td><b>Custom CSR Template</b></td>
+                        <td>
+                            <input type="hidden" name="" value="1" id="custom_csr_doc_exist_or_not">
+                            <a  class="link_grid link_w" href="{{ custom_csr_doc_latest.csr_template_location.url }}" target="_blank">{{ custom_csr_doc_latest.version_no }}</a>
+
+                        </td>
+                        <td>{{ custom_csr_doc_latest.created_by }}</td>
+                        <td>{{ custom_csr_doc_latest.created_on|date:"d/m/Y H:i" }}</td>
+                        <td>{{ custom_csr_doc_latest.comments }}</td>
+                        <td>
+                          {% if custom_csr_doc_list %}
+
+                            <a href="" data-toggle="modal" data-target="#other_custom_csr_version_user_modal">Other Versions</a>
+
+                          {% else %}
+
+                            Not Available
+
+                          {% endif %}
+                        </td>
+
+
+                      {% else %}
+
+                        <td><b>Global CSR Template</b></td>
+                        
+                        {% if csr_doc_latest %}
+                        <td>
+                            <input type="hidden" name="" value="1" id="custom_csr_doc_exist_or_not">
+                            <a  class="link_grid link_w" href="{{ csr_doc_latest.csr_template_location.url }}" target="_blank">{{ csr_doc_latest.version_no }}</a>
+
+                        </td>
+                        <td>{{ csr_doc_latest.created_by }}</td>
+                        <td>{{ csr_doc_latest.created_on|date:"d/m/Y H:i" }}</td>
+                        <td>{{ csr_doc_latest.comments }}</td>
+                        <td>
+                          {% if csr_doc_list %}
+
+                            <a href="" data-toggle="modal" data-target="#other_csr_version_user_modal">Other Versions</a>
+
+                          {% else %}
+
+                            Not Available
+
+                          {% endif %}
+                        </td>
+                        {% else %}
+                          <td colspan="5"></td>
+                        {% endif %}
+
+                      {% endif %}
+                      <td style="text-align:center">
+                        <button type="button" class="new_sub create__prj" data-href="{% url 'csr_upload' user.id projects.id %}" data-toggle="modal" data-target="#upload_csr_modal" id="upload_csr_form"><i class="ti-upload"></i><span> Upload</span></button>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      {% if protocol_doc_latest %}
+
+                        <td><b>Protocol</b></td>
+                        <td>
+                            <input type="hidden" name="" value="1" id="usr_protocol_doc_exist_or_not">
+                            <a  class="link_grid link_w" href="{{ protocol_doc_latest.protocol_document_location.url }}" target="_blank">{{ protocol_doc_latest.version_no }}</a>
+
+                        </td>
+                        <td>{{ protocol_doc_latest.created_by }}</td>
+                        <td>{{ protocol_doc_latest.uploaded_on|date:"d/m/Y H:i" }}</td>
+                        <td>{{ protocol_doc_latest.comments }}</td>
+                        <td>
+                          {% if protocol_doc_list %}
+
+                            <a href="" data-toggle="modal" data-target="#other_protocol_version_user_modal">Other Versions</a>
+
+                          {% else %}
+
+                            Not Available
+
+                          {% endif %}
+                        </td>
+
+                      {% else %}
+
+                        <td><b>Protocol</b></td>
+                        <td colspan="5">
+                          <input type="hidden" name="" value="0" id="usr_protocol_doc_exist_or_not">
+                        </td>
+                         
+
+                      {% endif %}
+                      <td style="text-align:center">
+                        <button type="button" class="new_sub create__prj" data-href="{% url 'protocol_file_upload' user.id projects.id %}" data-toggle="modal" data-target="#upload_protocol_modal" id="upload_protocol_form"><i class="ti-upload"></i><span> Upload</span></button>
+                      </td>
+                    </tr>
+                    
+                    <tr id="sar_tr">
+                      {% if sar_doc_latest %}
+
+                        <td><b>SAR</b></td>
+                        <td>
+                            <input type="hidden" name="" value="1" id="usr_sar_doc_exist_or_not">
+                            <a  class="link_grid link_w" href="{{ sar_doc_latest.sar_document_location.url }}" target="_blank">{{ sar_doc_latest.version_no }} 
+                             
+                            </a>
+
+                        </td>
+                        <td>{{ sar_doc_latest.created_by }}</td>
+                        <td>{{ sar_doc_latest.uploaded_on|date:"d/m/Y H:i" }}</td>
+                        <td>{{ sar_doc_latest.comments }}</td>
+                        <td>
+                          {% if sar_doc_list %}
+
+                            <a href="" data-toggle="modal" data-target="#other_sar_version_user_modal">Other Versions</a>
+
+                          {% else %}
+
+                            Not Available
+
+                          {% endif %}
+                        </td>
+
+                      {% else %}
+
+                        <td><b>SAR</b></td>
+                        <td colspan="5">
+                          <input type="hidden" name="" value="0" id="usr_sar_doc_exist_or_not">
+                        </td>
+                         
+
+                      {% endif %}
+                      <td style="text-align:center">
+                        <button type="button" class="new_sub create__prj" data-href="{% url 'sar_file_upload' user.id projects.id %}" data-toggle="modal" data-target="#upload_sar_modal" id="upload_sar_form"><i class="ti-upload"></i><span> Upload</span></button>
+                      </td>
+                    </tr>
+
+                    <!-- FOR OTHER DOCUMENT -->
+                    {% if is_another_doc_available %}
+                      <tr>
+                        {% if another_doc_latest %}
+
+                          <td><b>{{ is_another_doc_available.source_name }}</b></td>
+                          <td>
+                              <input type="hidden" name="" value="1" id="usr_another_doc_exist_or_not">
+                              <a  class="link_grid link_w" href="{{ another_doc_latest.another_document_location.url }}" target="_blank">{{ another_doc_latest.version_no }}</a>
+
+                          </td>
+                          <td>{{ another_doc_latest.created_by }}</td>
+                          <td>{{ another_doc_latest.uploaded_on|date:"d/m/Y H:i" }}</td>
+                          <td>{{ another_doc_latest.comments }}</td>
+                          <td>
+                            {% if another_doc_list %}
+
+                              <a href="" data-toggle="modal" data-target="#another_doc_other_version_user_modal">Other Versions</a>
+
+                            {% else %}
+
+                              Not Available
+
+                            {% endif %}
+                          </td>
+
+                        {% else %}
+
+                          <td><b>{{ is_another_doc_available.source_name }}</b></td>
+                          <td colspan="5">
+                            <input type="hidden" name="" value="0" id="usr_another_doc_exist_or_not">
+                          </td>
+                           
+
+                        {% endif %}
+                        <td style="text-align:center">
+                          <button type="button" class="new_sub create__prj" data-href="{% url 'another_file_upload' user.id projects.id %}" data-toggle="modal" data-target="#upload_another_doc_usr_modal" id="upload_another_doc_usr_form"><i class="ti-upload"></i><span> Upload</span></button>
+                        </td>
+                      </tr>
+
+                    {% endif %}
+
+                    <!-- OTHER DOC END -->
+
+                    <tr>
+
+                      <td><b>Clinical Study Report</b></td>
+
+                      {% if csr_doc_latest != None and protocol_doc_latest != None or sar_doc_latest != None or another_doc_latest != None %}
+
+                        {% if csr_report_latest %}
+
+                          <td>
+
+                              <a  class="link_grid link_w" href="/media/{{ csr_report_latest.generated_report_path }}" target="_blank">{{ csr_report_latest.version_no }}</a>
+
+                          </td>
+                          <td>{{ csr_report_latest.created_by }}</td>
+                          <td>{{ csr_report_latest.created_on|date:"d/m/Y H:i" }}</td>
+                          <td>Generated</td>
+                          <td>
+                            {% if csr_report_list %}
+
+                              <a href="" data-toggle="modal" data-target="#other_generated_csr_version_user_modal">Other Versions</a>
+
+                            {% else %}
+
+                              Not Available
+
+                            {% endif %}
+                          </td>
+
+                        {% else %}
+
+                          <td colspan="4" style="text-align: center;">
+                            <h4>No report generated yet!</h4>
+                          </td>
+
+                        {% endif %}
+
+                        <td colspan="2">
+
+                          {% if custom_csr_doc_latest != None or csr_doc_latest != None %}
+                            <a href="{% url 'edit_csr_mapping' user.id projects.id %}">
+                              <button type="button" class="assign__pro mr-2"><span>Edit Mapping</span></button>
+                            </a>
+                          
+                          {% endif %}
+                          <a data-href="{% url 'generate_csr' user.id projects.id %}" id="generate_csr_link" data-toggle="modal" data-target="#confirm_generate_csr_modal">
+                            <button type="button"  class="assign__pro"><span>Generate CSR</span></button>
+                          </a>
+
+                        </td>
+
+                      {% else %}
+
+                        <td colspan="6" style="text-align: center;">
+                           <h4> Please upload all the documents...</h4>
+                        </td>
+
+
+                      {% endif %}
+                      
+
+                    </tr>
+
+                    
+
+                  </tbody>
+                 
+               </table>
+
+            
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload CSR Modal -->
+  <div class="modal fade" id="upload_csr_modal" tabindex="-1" role="dialog" aria-labelledby="upload_csr_modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          </div>
+      </div>
+  </div>
+  <!-- Upload Protocol Modal -->
+  <div class="modal fade" id="upload_protocol_modal" tabindex="-1" role="dialog" aria-labelledby="upload_protocol_modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          </div>
+      </div>
+  </div>
+  <!-- Upload SAR Modal -->
+  <div class="modal fade" id="upload_sar_modal" tabindex="-1" role="dialog" aria-labelledby="upload_sar_modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          </div>
+      </div>
+  </div>
+  <!-- Upload Another document Modal -->
+  <div class="modal fade" id="upload_another_doc_usr_modal" tabindex="-1" role="dialog" aria-labelledby="upload_another_doc_usr_modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          </div>
+      </div>
+  </div>
+
+
+<!-- csr other versions modal -->
+<div class="modal fade" id="other_csr_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">Global CSR Documents</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Uploaded By</th>
+                <th>Uploaded On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in csr_doc_list %}
+              <tr>
+                <td><a class="link_grid" href="{{ i.csr_template_location.url }}" target="_blank">{{ i.version_no }}</a></td>
+                <td>{{ i.created_by }}</td>
+                <td>{{ i.created_on|date:"d/m/Y H:i" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom csr other versions modal -->
+<div class="modal fade" id="other_custom_csr_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">Custom CSR Documents</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Uploaded By</th>
+                <th>Uploaded On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if custom_csr_doc_list %}
+
+                {% for i in custom_csr_doc_list %}
+
+                <tr>
+                  <td><a class="link_grid" href="{{ i.csr_template_location.url }}" target="_blank">{{ i.version_no }}</a></td>
+                  <td>{{ i.created_by }}</td>
+                  <td>{{ i.created_on|date:"d/m/Y H:i" }}</td>
+                </tr>
+
+                {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Protocol other versions modal -->
+<div class="modal fade" id="other_protocol_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">Protocol Documents</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Uploaded By</th>
+                <th>Uploaded On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if protocol_doc_list %}
+
+                {% for i in protocol_doc_list %}
+
+                <tr>
+                  <td><a class="link_grid" href="{{ i.protocol_document_location.url }}" target="_blank">{{ i.version_no }}</a></td>
+                  <td>{{ i.created_by }}</td>
+                  <td>{{ i.uploaded_on|date:"d/m/Y H:i" }}</td>
+                </tr>
+
+                {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- SAR other versions modal -->
+<div class="modal fade" id="other_sar_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">SAR Documents</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Uploaded By</th>
+                <th>Uploaded On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if sar_doc_list %}
+
+                {% for i in sar_doc_list %}
+
+                <tr>
+                  <td><a class="link_grid" href="{{ i.sar_document_location.url }}" target="_blank">{{ i.version_no }}</a></td>
+                  <td>{{ i.created_by }}</td>
+                  <td>{{ i.uploaded_on|date:"d/m/Y H:i" }}</td>
+                </tr>
+
+                {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Another document other versions modal -->
+<div class="modal fade" id="another_doc_other_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">{{ is_another_doc_available.source_name }} Documents</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Uploaded By</th>
+                <th>Uploaded On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if another_doc_list %}
+
+                {% for i in another_doc_list %}
+
+                <tr>
+                  <td><a class="link_grid" href="{{ i.another_document_location.url }}" target="_blank">{{ i.version_no }}</a></td>
+                  <td>{{ i.created_by }}</td>
+                  <td>{{ i.uploaded_on|date:"d/m/Y H:i" }}</td>
+                </tr>
+
+                {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Generated CSR other versions modal -->
+<div class="modal fade" id="other_generated_csr_version_user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 class="modal-title">Clinical Study Report</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <table class="table table-hover table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Versions</th>
+                <th>Generated By</th>
+                <th>Generated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if csr_report_list %}
+
+                {% for i in csr_report_list %}
+
+                <tr>
+                  <td><a class="link_grid" href="/media/{{ i.generated_report_path }}" target="_blank">{{ i.version_no }}</a></td>
+                  <td>{{ i.created_by }}</td>
+                  <td>{{ i.created_on|date:"d/m/Y H:i" }}</td>
+                </tr>
+
+                {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Another Document Source name Modal -->
+<div class="modal fade" id="add_another_document__usr_modal" tabindex="-1" role="dialog" aria-labelledby="add_another_document__usr_modallLabel" aria-hidden="true" data-backdrop="static" >
+      <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+
+          <form method="POST" data-href="{% url 'add_another_document__usr' user.id projects.id %}" id="add_another_document_form__usr">
+            {% csrf_token %}
+
+            <div class="modal-header">
+              <h5 class="modal-title"></h5>Add New Document
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <small class="sml__hint">Enter source document name</small>
+              <div class="form_wrp">
+                <input type="text" class="input_cn" placeholder="Source document name" name="source_doc_name" autofocus required id="id_source_doc_name" maxlength="15" value="" autocomplete="off" onkeypress="return /^[\w\-\. ]+$/i.test(event.key)">
+                <span id="error_source_doc_name" class="text-danger"></span>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <input type="button" class="btn btn-primary add_another_document_btn__usr" value="Add" />
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+
+  </div>
+
+<!-- Confirm CSR generate -->
+{% include 'confirm_generate_csr.html' %}
+
+{% endblock %}

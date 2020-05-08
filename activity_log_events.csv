@@ -1,0 +1,22 @@
+event,message
+Add User,Added a new user #
+Activate User,Activated a user #
+Deactivate User,Deactivated a user #
+Create Project,Created a new project #
+Assign Project,Assigned project # to the users
+CSR Upload,uploaded CSR against client #
+CSR Download,Downloaded CSR Template
+Edit Project,Project # has been edited
+Protocol Upload,uploaded protocol against project #
+SAR Upload,uploaded SAR against project #
+Upload Protocol,uploaded Protocol against client #
+Upload SAR,uploaded SAR against client #
+Custom CSR Upload,uploaded custom CSR against project #
+Generate CSR,generated CSR against project #
+Edit Custom CSR,edited custom CSR mapping against project #
+CSR Mapping,edited global CSR mapping against client #
+Resend Email,resent an email against # for $
+Clear Configurations,cleared the Global Configurations against client #
+Configurations Clear,cleared the Configurations against project #
+Another Document,added @ against project #
+Another Doc Upload,uploaded @ against project #

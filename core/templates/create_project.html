@@ -1,0 +1,88 @@
+{% if client_list %}
+    <form class="create_project_form" method="POST" data-url="{% url 'create_project' user.id %}">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title" id="create_project_modalLabel">Create Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form_wrp">
+            <input type="text" name="project_name" maxlength="15" minlength="2" required id="id_project_name" onkeypress="return /^[A-Za-z0-9][A-Za-z0-9\d_]*$/i.test(event.key)" class="input_cn" placeholder="Project Name" title="Should start with [a-zA-Z] & minimum length is two">
+            <small class="text-danger">{{ form.errors.project_name | striptags }}</small>
+        </div>
+
+        <div class="form_wrp">
+            <input type="text" name="protocol_id" maxlength="12" required id="id_protocol_id" class="input_cn" placeholder="Protocol ID">
+            <small class="text-danger">{{ form.errors.protocol_id | striptags }}</small>
+        </div>
+
+        <div class="form_wrp">
+            <select name="therapeutic_area" class="input_cn chosen" id="id_therapeutic_area" required>
+                <option value="" disabled selected>Select Therapeutic Area</option>
+                {% for ele in therapeutic_area_list %}
+                    <option value="{{ ele.id }}">{{ ele.therapeutic_area }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-danger">{{ form.errors.therapeutic_area | striptags }}</small>
+        </div>
+
+        <div class="form_wrp">
+            <select name="phase" class="input_cn" id="id_phase" required>
+                <option value="" disabled selected>Select Phase</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="Observational">Observational</option>
+            </select>
+            <small class="text-danger">{{ form.errors.phase | striptags }}</small>
+        </div>
+
+        <div class="form_wrp">      
+            
+            <select name="client" class="input_cn chosen" id="id_client" required>
+                <option value="" disabled selected>Select Client</option>
+                {% for ele in client_list %}
+                    <option value="{{ ele.id }}">{{ ele.client_name }}</option>
+                {% endfor %}
+            </select>
+
+            <small class="text-danger">{{ form.errors.client | striptags }}</small>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+         <button type="submit" class="frm_btn__">Create Project</button>
+       
+      </div>
+        
+
+    </form>
+
+{% else %}
+
+    <div class="modal-header">
+        <h3 class="modal-title" id="create_project_modalLabel" style="color: red;">Sorry!</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {% if user.is_superuser %}
+
+            <span>There is no client available. Please add the client to create project.</span>
+            
+        {% else %}
+
+            <span>There is no client available. Please contact admin.</span>
+
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">Ok</button>
+    </div>
+
+{% endif %}

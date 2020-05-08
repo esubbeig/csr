@@ -1,0 +1,18 @@
+[2020-04-29 23:50:06] CRITICAL [csr_except.login_request:419] 'bool' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\esubr\Desktop\csr Enhance\csr\core\views.py", line 387, in login_request
+    if request.user.is_authenticated():
+TypeError: 'bool' object is not callable
+
+[2020-04-29 23:54:25] CRITICAL [csr_except.home:86] 'bool' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\esubr\Desktop\csr Enhance\csr\core\views.py", line 68, in home
+    if request.user.is_authenticated():
+TypeError: 'bool' object is not callable
+
+[2020-05-06 15:09:56] CRITICAL [csr_except.allocate_version_no:374] 'decimal.Decimal' object has no attribute 'split'
+Traceback (most recent call last):
+  File "C:\Users\esubr\Desktop\csr Enhance\csr\core\generate_csr.py", line 362, in allocate_version_no
+    ver, rev = obj.split('.')
+AttributeError: 'decimal.Decimal' object has no attribute 'split'
+

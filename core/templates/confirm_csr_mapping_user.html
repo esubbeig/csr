@@ -1,0 +1,116 @@
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirm_user_mapping_modalLabel">Confirm Changes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        
+          
+          <!-- to show previous mapping -->
+        <div class="col-md-12" style="overflow: auto;">
+          <table class="table table-bordered ">
+            <thead class="thead-dark ">
+              <tr>
+                <th style="text-align: center;">Previous Mapping</th>
+                <th  style="text-align: center;">Updated Mapping</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="vertical-align: top;">
+
+                    <table class="tbl_mx col-md-12">
+                    <thead class="thead-dark ">
+                      <tr>
+                        <th>CSR Heading</th>
+                        <th>Source</th>
+                        <th>Source Heading</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      {% if custom_mapping %}
+
+                        {% for i in custom_mapping %}
+
+                          <tr>
+                            <td>{{ i.csr_heading }}</td>
+                            <td>{{ i.source_file }}</td>
+                            <td>{{ i.copy_headings }}</td>
+                          </tr>
+
+                        {% endfor %}
+
+                      {% endif %}
+                      
+                    </tbody>
+                  </table>
+
+                </td>
+                <td style="vertical-align: top;">
+                  
+                   <table class="tbl_mx">
+                    <thead class="thead-dark ">
+                      <tr>
+                        <th>CSR Heading</th>
+                        <th>Source</th>
+                        <th>Source Heading</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% if updated_mapping_form_data %}
+
+                        {% for k in updated_mapping_form_data %}
+
+                          <!-- {% if k in custom_mapping %}
+                            <tr style="color: red;">
+                          {% else %}
+                            <tr style="color: green;">
+                          {% endif %} -->
+                          <tr>
+                            <td>{{ k.csr_heading }}</td>
+                            <td>{{ k.source_file }}</td>
+                            <td>{{ k.copy_headings }}</td>
+                          </tr>
+                          
+                        {% endfor %}
+
+                      {% endif %}
+                      
+                      
+                    </tbody>
+                  </table>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <br>
+        
+        <div class="form_wrp">
+          <input type="text" class="input_cn" placeholder="Reason for changes" name="reason" maxlength="400" autofocus required id="id_reason" value="">
+          <span id="error_reason" class="text-danger txt__alert"></span>
+        </div>
+          
+
+      </div>
+      <div class="modal-footer">
+
+        <input type="button" class="btn btn-danger Cancel" value="Cancel" data-dismiss="modal" aria-label="Close">
+
+        {% if updated_mapping_form_data %}
+
+          <input type="button" class="btn btn-primary confirm_map_user" value="Submit">
+
+        {% else %}
+
+          <input type="button" class="btn btn-primary" disabled value="Submit">
+
+        {% endif %}
+
+
+      </div>

@@ -1,0 +1,130 @@
+{% extends 'admin_home.html' %}
+
+{% block admin_content %}
+		
+		<div class="container page-body-wrapper"> 
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4 class="mb-0 breadcrumb_">Users</h4>
+                    <a href="{% url 'home' %}" class="bread__lnk">Home </a> / <label class="bread__lnk">Users</label>
+                </div>
+                <div>
+                  {% if config != None %}
+
+                    
+
+                      <button type="button" class="new_sub create__prj" data-href="{% url 'add_user' %}" data-toggle="modal" data-target="#create_user_modal" id="user_create_form"><i class="ti-user"></i><span> Add User</span></button>
+                    
+                    
+                  {% else %}
+
+                    <button type="button" class="new_sub create__prj" id="user_create_form_disabled"><i class="ti-user"></i><span> Add User</span></button>
+
+                  {% endif %}
+                </div>
+
+              </div>
+              <div style="text-align: right">
+
+                <div class="custom-control custom-checkbox mr-sm-2">
+
+                    <input type="checkbox" class="custom-control-input user_inactive" id="customControlAutosizing" checked="true" style="">
+                    <label class="custom-control-label" for="customControlAutosizing" style="font-weight: normal;font-size: 15px;padding-top: 2px;color: #19408f">Hide inactive users</label>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+		      <div class="row">
+            <div class="col-md-12 grid-margin stretch-card admin_users_div">
+              {% if users|length > 1 %}
+                 <table class="table table-hover table-striped table-bordered" id="admin_users">
+                	<thead class="thead-dark">  
+                    <tr>
+                    <th>User Name</th>
+                    <th class="no-sort">No. of Projects  </th>
+                    <th class="no-sort">Status </th>
+                    <th class="no-sort">Action</th> 
+                    
+                  </tr></thead>
+                  <tbody>
+                  	{% for usr in users %}
+  						        {% if usr.username != user.username %}
+                   			<tr>
+                      			<td>{{ usr.username }}</td>
+                      			<td>
+                              {% for i in proj_count %}
+                                  {% if i.user.id == usr.id %}
+                                    {{ i.project_count }}
+                                  {% endif %}
+                              {% endfor %}
+                            </td>
+                            <td>
+                              {% if usr.is_active %}
+                      
+                                <span class="badge badge-brd-primary">Active</span>
+                      
+                              {% else %}
+                     
+                                <span class="badge badge-disable">Disabled</span>
+                      
+                              {% endif %}
+                            </td>
+                      			<td>
+                      			
+                            {% if usr.is_active %}
+                              <a href="{% url 'deactivate_user' usr.id %}">
+                              <span class="badge badge-danger">Deactivate</span>
+                              </a>
+                            {% else %}
+                              <a href="{% url 'activate_user' usr.id %}">
+                              <span class="badge badge-success">Activate</span>
+                              </a>
+                            {% endif %}
+                   					</td>
+                      	</tr>
+                      {% endif %}
+  					        {% endfor %}
+  			 	        </tbody>
+                </table>
+                {% else %}
+
+                 <!-- <div class="no_res"> No Users Available</div> -->
+                 <table class="table table-hover table-striped table-bordered" id="admin_users">
+                  <thead class="thead-dark">  
+                    <tr>
+                    <th>User Name</th>
+                    <th class="no-sort">No. of Projects  </th>
+                    <th class="no-sort">Status </th>
+                    <th class="no-sort">Action</th> 
+                    
+                  </tr></thead>
+                  <tbody>
+                  </tbody>
+                </table>
+                
+
+                {% endif %}
+            </div>
+          </div>
+
+          <div class="modal fade" id="create_user_modal" tabindex="-1" role="dialog" aria-labelledby="create_user_modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+{% endblock %}

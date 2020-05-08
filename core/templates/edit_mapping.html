@@ -1,0 +1,1642 @@
+{% extends 'base.html' %}
+{% load filters %}
+
+{% block content %}
+
+  
+  <div class="container page-body-wrapper"> 
+        <div class="main-panel">
+          <div class="content-wrapper">
+
+              <div class="row">
+                <div class="col-md-12 grid-margin">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="col-md-5 nopads">
+                          <a class="back_btn__" href="{% url 'project_dashboard' usr_id proj_id %}"><i class="ti-arrow-left"></i></a>
+                          <h4 class="mb-0 breadcrumb_">Edit CSR Mapping</h4>
+                          <a href="{% url 'home' %}" class="bread__lnk">Home</a> / <a href="{% url 'home' %}" class="bread__lnk">Projects </a> / <a href="{% url 'project_dashboard' usr_id proj_id %}" class="bread__lnk">{{ projects.project_name }}</a> / <span class="bread__lnk">Edit CSR Mapping</span>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="col-md-12 grid-margin">
+                  
+                  <form method="post" id="edit_mapping_user_form" data-url="{% url 'confirm_csr_mapping_user' usr_id proj_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="" id="annn" value="kkdjs">
+                    <table class="table table-hover tbl_mx">
+                      <thead class="thead-dark ">
+                      	<tr>
+                        	<th>CSR Heading</th>
+                        	<th>Source</th>
+                        	<th>Source Heading</th>
+                        	<th></th>
+                      	</tr>
+                      </thead>
+                      <tbody>
+
+                       {% if custom_mapping %}
+
+                          {% for i in custom_mapping %}
+
+                            {% if i.csr_heading == i.parent_id %}
+
+                              <tr class="no-brd" id='record-{{ forloop.counter }}'>
+
+                            {% else %}
+
+                              <tr id='record-{{ forloop.counter }}'>
+
+                            {% endif %}
+
+                              <td>
+                                <!-- CSR Headings -->
+
+                                <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i.csr_heading }}">
+
+                                {% if i.csr_heading == i.parent_id %}
+
+                                  <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i.csr_heading }}">
+                                  <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i.csr_heading }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+
+                                {% else %}
+                                  <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+                                  <input class="form-control csr_heading_usr" type="text" readonly value="{{ i.csr_heading }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                {% endif %}
+
+                              </td>
+                              <td>
+                                <!-- Source -->
+                                <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+                                    
+                                  <option value="">Source</option>
+                                  {% if protocol_headings and sar_headings and another_doc_headings == None %}
+
+                                    {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                      {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                        {% for z in global_pre_mapped_headings %}
+
+                                          {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                            <option value="Protocol" {% if z.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                            <option value="SAR" {% if z.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                                          {% endif %}
+
+                                        {% endfor %}
+
+                                      {% else %}
+
+                                        <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                        <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                                      {% endif %}
+
+                                    {% else %}
+
+                                      <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                      <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                      
+
+                                    {% endif %}
+
+                                  {% elif protocol_headings and sar_headings == None and another_doc_headings %}
+
+                                    {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                      {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                        {% for z in global_pre_mapped_headings %}
+
+                                          {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                            <option value="Protocol" {% if z.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                            
+                                            <option value="{{ is_another_doc_available.source_name }}" {% if z.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                          {% endif %}
+
+                                        {% endfor %}
+
+                                      {% else %}
+
+                                        <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                        
+                                        <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                      {% endif %}
+                                
+                                    {% else %}
+
+
+                                      <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                      
+                                      <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                    {% endif %}
+
+                                  {% elif protocol_headings == None and sar_headings and another_doc_headings %}
+
+                                    {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                      {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                        {% for z in global_pre_mapped_headings %}
+
+                                          {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                            
+                                            <option value="SAR" {% if z.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                            <option value="{{ is_another_doc_available.source_name }}" {% if z.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                          {% endif %}
+
+                                        {% endfor %}
+
+                                      {% else %}
+
+                                        
+                                        <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                        <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                      {% endif %}
+                                
+                                    {% else %}
+
+
+                                      
+                                      <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                      <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                    {% endif %}
+
+                                  {% elif protocol_headings and sar_headings and another_doc_headings %}
+
+                                    {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                      {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                        {% for z in global_pre_mapped_headings %}
+
+                                          {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                            <option value="Protocol" {% if z.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                            <option value="SAR" {% if z.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                            <option value="{{ is_another_doc_available.source_name }}" {% if z.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                          {% endif %}
+
+                                        {% endfor %}
+
+                                      {% else %}
+
+                                        <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                        <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                        <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                      {% endif %}
+                                
+                                    {% else %}
+
+
+                                      <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                      <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                      <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                    {% endif %}
+
+                                  {% else %}
+
+                                    {% if protocol_headings %}
+
+                                      {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                        {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                          {% for z in global_pre_mapped_headings %}
+
+                                            {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                              <option value="Protocol" {% if z.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+
+                                            {% endif %}
+
+                                          {% endfor %}
+
+                                        {% else %}
+
+                                          <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+
+                                        {% endif %}
+                                
+                                      {% else %}
+
+                                        <option value="Protocol" {% if i.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+
+                                      {% endif %}
+
+                                    {% elif sar_headings %}
+
+                                      {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                        {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                          {% for z in global_pre_mapped_headings %}
+
+                                            {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                              <option value="SAR" {% if z.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                                            {% endif %}
+
+                                          {% endfor %}
+
+                                        {% else %}
+
+                                          <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                                        {% endif %}
+                                
+                                      {% else %}
+
+                                        <option value="SAR" {% if i.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+                                      {% endif %}
+
+                                    {% elif another_doc_headings %}
+
+                                      {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+                                        {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                          {% for z in global_pre_mapped_headings %}
+
+                                            {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                              <option value="{{ is_another_doc_available.source_name }}" {% if z.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                            {% endif %}
+
+                                          {% endfor %}
+
+                                        {% else %}
+
+                                          <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                        {% endif %}
+                                
+                                      {% else %}
+
+                                        <option value="{{ is_another_doc_available.source_name }}" {% if i.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+                                      {% endif %}
+
+                                    {% endif %}
+
+                                  {% endif %}
+
+                                </select>
+                              </td>
+                              <td>
+                                <!-- Source Headings -->
+                                <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                {% if i.parent_id == '0' and i.source_file == '' and i.copy_headings == '' %}
+
+                                  {% if i.csr_heading in list_global_pre_mapped_csr_headings_parent %}
+
+                                    {% for z in global_pre_mapped_headings %}
+
+                                      {% if i.csr_heading == z.csr_heading and z.parent_id == '0' %}
+
+                                        {% if z.source_file == 'Protocol' %}
+
+                                          {% if protocol_headings %}
+
+                                            <option value="">------</option>
+                                            {% for j in protocol_headings %}
+
+                                              <option value="{{ j }}" {% if z.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                            {% endfor %}
+
+                                          {% else %}
+
+                                            <option value="">------</option>
+
+                                          {% endif %}
+
+
+                                        {% elif z.source_file == 'SAR' %}
+
+                                          {% if sar_headings %}
+
+                                            <option value="">------</option>
+                                            {% for j in sar_headings %}
+
+                                              <option value="{{ j }}" {% if z.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                            {% endfor %}
+
+                                          {% else %}
+
+                                            <option value="">------</option>
+
+                                          {% endif %}
+
+
+                                        {% elif z.source_file == is_another_doc_available.source_name %}
+
+                                          {% if another_doc_headings %}
+
+                                            <option value="">------</option>
+                                            {% for j in another_doc_headings %}
+
+                                              <option value="{{ j }}" {% if z.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                            {% endfor %}
+
+                                          {% else %}
+
+                                            <option value="">------</option>
+
+                                          {% endif %}
+
+
+                                        {% endif %}
+
+
+                                      {% endif %}
+
+
+                                    {% endfor %}
+
+                                  {% else %}
+
+                                    <option value="">------</option>
+
+                                  {% endif %}
+
+
+                                {% else %}
+
+                                  {% if i.source_file == 'Protocol' %}
+                                    
+
+                                      <option value="">------</option>
+                                      {% for j in protocol_headings %}
+
+                                        <option value="{{ j }}" {% if i.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                      {% endfor %}
+
+
+                                  
+                                  {% elif i.source_file == 'SAR' %}
+
+                                     
+
+                                      <option value="">------</option>
+                                      {% for j in sar_headings %}
+
+                                        <option value="{{ j }}" {% if i.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                      {% endfor %}
+
+
+                                  {% elif i.source_file == is_another_doc_available.source_name %}
+
+                                     
+
+                                      <option value="">------</option>
+                                      {% for j in another_doc_headings %}
+
+                                        <option value="{{ j }}" {% if i.copy_headings == j %} selected {% endif %}>{{ j }}</option>
+
+                                      {% endfor %}                 
+
+                                  {% endif %}
+
+
+                                {% endif %}
+
+                              </select>
+
+                              </td>
+                              <td>
+                                
+                                {% if i.csr_heading == i.parent_id %}
+
+                                  <input type="button" class="remove_record_user" value="" >
+
+                                {% else %}
+
+                                  <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.counter }}" value=" " >
+
+
+                                {% endif %}
+
+                              </td>
+
+                            </tr>
+                            
+                          {% endfor %}
+
+<!-- ----------------------------------------------------------------------------------------- -->
+
+                        {% else %}
+
+                              {% if protocol_headings and sar_headings and another_doc_headings == None %}
+
+                                {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                            
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i }}">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                           
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="Protocol">Protocol</option>
+                                                <option value="SAR">SAR</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                      {% endfor %}
+
+                              {% elif protocol_headings and sar_headings == None and another_doc_headings %}
+
+                                {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                            
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i }}">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                          <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                          </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                           
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="Protocol">Protocol</option>
+                                                
+                                                <option value="{{ is_another_doc_available.source_name }}">{{ is_another_doc_available.source_name }}</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                {% endfor %}
+
+                              {% elif protocol_headings == None and sar_headings and another_doc_headings %}
+
+                                {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                            
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        
+
+                                                        {% if j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i }}">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                        
+
+                                                        {% if j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                          <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                          </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                           
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                
+                                                <option value="SAR">SAR</option>
+                                                <option value="{{ is_another_doc_available.source_name }}">{{ is_another_doc_available.source_name }}</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                {% endfor %}
+
+                              {% elif protocol_headings and sar_headings and another_doc_headings %}
+
+                                {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                            
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="{{ i }}">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" {% if j.source_file == 'Protocol' %} selected {% endif %}>Protocol</option>
+                                                          <option value="SAR" {% if j.source_file == 'SAR' %} selected {% endif %}>SAR</option>
+                                                          <option value="{{ is_another_doc_available.source_name }}" {% if j.source_file == is_another_doc_available.source_name %} selected {% endif %}>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                        {% if j.source_file == 'Protocol' %}
+                                  
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in protocol_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == 'SAR' %}
+
+                                                            <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in sar_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                            </select>
+
+                                                        {% elif j.source_file == is_another_doc_available.source_name %}
+
+                                                          <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                              <option value="">------</option>
+                                                              {% for k in another_doc_headings %}
+
+                                                                <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                              {% endfor %}
+
+                                                          </select>
+
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                           
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="Protocol">Protocol</option>
+                                                <option value="SAR">SAR</option>
+                                                <option value="{{ is_another_doc_available.source_name }}">{{ is_another_doc_available.source_name }}</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                {% endfor %}
+
+                              {% else %}
+
+
+                                  {% if protocol_headings %}
+
+                                      {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                                   
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" selected>Protocol</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                      
+                                                        <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in protocol_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="Protocol" selected>Protocol</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                      <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in protocol_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                            
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="Protocol">Protocol</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                      {% endfor %}
+                                      
+
+                                  {% elif sar_headings %}
+
+                                      {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                                   
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                     
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="SAR" selected>SAR</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                     
+                                                        <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in sar_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="SAR" selected>SAR</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                      <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in sar_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                            
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="SAR">SAR</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                      {% endfor %}
+
+
+                                  {% elif another_doc_headings %}
+
+                                      {% for i in csr_headings %}
+
+                                        {% if i|remove_leading_numbers_str in list_global_pre_mapped_csr_headings_parent|remove_leading_numbers_list %}
+
+                                            {% for j in global_pre_mapped_headings %}
+
+
+
+                                              {% if i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == '0' %}
+
+                                                  <tr id='record-{{ forloop.parentloop.counter }}'>
+                                                    <td>
+                                                   
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                     
+                                                        <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="{{ is_another_doc_available.source_name }}" selected>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                     
+                                                        <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in another_doc_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="add_record_usr_prem" data-target="#record-{{ forloop.parentloop.counter }}" value=" " >
+                                                    </td>
+                                                  </tr>
+
+                                              {% elif i|remove_leading_numbers_str == j.csr_heading|remove_leading_numbers_str and j.parent_id == i %}
+
+                                                  <tr class="no-brd" id='record-{{ forloop.parentloop.counter }}-{{ forloop.counter }}'>
+                                                    <td>
+
+                                                        <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                                        <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                                        <input class="form-control csr_heading_usr" type="hidden" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="csr_headings[]">
+
+                                                    </td>
+                                                    <td>
+                                                      <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    
+                                                          <option value="">Source</option>
+
+                                                          <option value="{{ is_another_doc_available.source_name }}" selected>{{ is_another_doc_available.source_name }}</option>
+
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                    
+                                                      <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                          <option value="">------</option>
+                                                          {% for k in another_doc_headings %}
+
+                                                            <option value="{{ k }}" {% if j.copy_headings|remove_leading_numbers_str == k|remove_leading_numbers_str %} selected {% endif %}>{{ k }}</option>
+
+                                                          {% endfor %}
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                      <input type="button" class="remove_record_user" value="" >
+                                                    </td>
+                                                  </tr>
+
+                                              {% endif %}
+
+                                            {% endfor %}
+
+
+                                        {% else %}
+
+
+                                          <tr id='record-{{ forloop.counter }}'>
+                                            <td>
+                                            
+                                              <input type="hidden" class="parent_id" name="parent_id[]" value="{{ i }}">
+
+                                              <input type="hidden" class="child_parent_id" name="child_parent_id[]" value="0">
+
+                                              <input class="form-control csr_heading_usr" type="text" readonly value="{{ i }}" id="csr-heading-usr-{{ forloop.counter }}" name="csr_headings[]">
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_select_usr" data-target="#copy-heading-usr-{{ forloop.counter }}" name="source[]" id="source-usr-{{ forloop.counter }}">
+
+                                                <option value="">Source</option>
+                                                <option value="{{ is_another_doc_available.source_name }}">{{ is_another_doc_available.source_name }}</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select class="form-control source_file_headings_usr" id="copy-heading-usr-{{ forloop.counter }}" name="copy_headings[]">
+
+                                                <option value="">------</option>
+
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <input type="button" class="add_record_user" data-target="#record-{{ forloop.counter }}" value="" >
+                                            </td>
+                                          </tr>
+
+
+                                        {% endif %}
+
+                                        
+                                      {% endfor %}
+
+                                  {% endif %}
+
+
+                              {% endif %}
+                        
+                            
+                        {% endif %}
+                      
+                    </tbody>
+                  </table>
+                  <div class="row__btm">
+
+                  {% if custom_mapping %}
+                    <input type="hidden" id="records_length" value="{{ custom_mapping|length }}" />
+                  {% else %}
+                    <input type="hidden" id="records_length" value="{{ record_len }}" />
+                  {% endif %}
+
+
+                  <input type="hidden" id="user_id" value="{{ usr_id }}" />
+                  <input type="hidden" id="project_id" value="{{ proj_id }}" name="project_id" />
+
+                  <input type="hidden" id="another_source_name" value="{{ is_another_doc_available.source_name }}" name="another_source_name" />
+                  
+                  <input type="hidden" id="protocol_headings_length" value="{{ protocol_headings|length }}" />
+                  <input type="hidden" id="sar_headings_length" value="{{ sar_headings|length }}" />
+
+                  <input type="hidden" id="another_doc_headings_length" value="{{ another_doc_headings|length }}" />
+
+                  <input type="hidden" id="usr_protocol_headings_list" value="{{ protocol_headings_json }}" />
+                  <input type="hidden" id="usr_sar_headings_list" value="{{ sar_headings_json }}" />
+                  <input type="hidden" id="usr_another_doc_headings_list" value="{{ another_doc_headings_json }}" />
+
+
+                  <input type="button" name="" id="edit_mapping_user_btn" class="save__mapping" value="Save Mapping" data-target="#confirm_user_mapping_modal" data-toggle="modal" />
+                  
+                  
+                  <!-- confirm mapping modal -->
+                  <div class="modal  fade" id="confirm_user_mapping_modal" tabindex="-1" role="dialog" aria-labelledby="confirm_user_mapping_modalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                      </div>
+                    </div>
+                  </div>
+
+                  </div></form>
+                </div></div>
+                
+              
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

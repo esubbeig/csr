@@ -1,0 +1,75 @@
+<form  method="POST" data-url="{% url 'email_configuration' %}" class="email_configuration_form">
+	
+  {% csrf_token %}
+
+  <div class="modal-header">
+
+    <h5 class="modal-title" id="email_configuration_modalLabel">Email Configuration</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    
+  </div>
+  
+  <div class="modal-body">
+
+    <div class="form_wrp">
+                          
+      <label for="id_email_host">SMTP Host</label>
+      <input type="text" class="form-control" name="email_host" autofocus required id="id_email_host">
+      {% for error in form.email_host.errors %}
+
+        <i class="red-text text-darken-2"><font color="red">{{ error }}</font></i>
+
+      {% endfor %}
+       
+      <div class="proj__info">
+        <label for="id_email_host_user">Username </label>
+        <input type="text" class="form-control" name="email_host_user" required id="id_email_host_user">
+        {% for error in form.email_host_user.errors %}
+
+          <i class="red-text text-darken-2"><font color="red">{{ error }}</font></i>
+
+        {% endfor %}
+      </div>
+
+      <div class="proj__info">
+        <label for="id_email_host_password">Password</label>
+        <input type="password" class="form-control" name="email_host_password" id="id_email_host_password">
+        {% for error in form.email_host_password.errors %}
+
+          <i class="red-text text-darken-2"><font color="red">{{ error }}</font></i>
+
+        {% endfor %}
+      </div>
+
+      <div class="proj__info">
+        <label for="id_email_port">Port </label>
+        <input type="number" class="form-control" name="email_port" required id="id_email_port">
+        {% for error in form.email_port.errors %}
+
+          <i class="red-text text-darken-2"><font color="red">{{ error }}</font></i>
+
+        {% endfor %}
+      </div>
+
+      <div class="proj__info">
+        <label for="id_email_default_mail">Default Email</label>
+        <input type="email" class="form-control" name="email_default_mail" required id="id_email_default_mail">
+        {% for error in form.email_default_mail.errors %}
+
+          <i class="red-text text-darken-2"><font color="red">{{ error }}</font></i>
+
+        {% endfor %}
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="frm_btn__">Save changes</button>
+  </div>
+    
+</form>

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container page-body-wrapper"> 
+    <div class="main-panel">
+    	<div class="content-wrapper">
+        
+    		<div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                  <h4 class="mb-0 breadcrumb_">Global CSR Mapping</h4>
+                  <a href="{% url 'home' %}" class="bread__lnk">Home </a> / <label class="bread__lnk">Global CSR Mapping</label>
+                </div>
+
+                
+              
+              </div>
+              <div style="text-align: right;">
+                    <label for="client_sel" style="font-size: 21px;padding-right: 4px;">Client</label>
+                    <select class="input_cn" id="client_sel" style="width: 150px;">
+                      
+                      {% for ele in client_list %}
+
+                        <option value="{% url 'display_global_csr_mapping' ele.id %}" {% if ele.client_name == req_client.client_name %} selected {% endif %}>{{ ele.client_name }}</option>
+
+                      {% endfor %}
+                    </select>
+                  </div>
+            </div>
+          </div>
+    		<div class="row">
+          {% if mapping_table %}
+             <table class="table table-hover table-triped table-bordered tbl_mx">
+    			   
+                  <thead class="thead-dark ">
+                    <tr>
+                    	<th>CSR Section Heading</th>
+					      	<th>From</th>
+					      	<th>Copy Section Heading</th>
+                    </tr>
+                  </thead> 
+  					<tbody>
+  						{% for i in mapping_table %}
+
+                
+
+  							
+  								{% if i.csr_heading == i.parent_id %}
+                    <tr class="no-brd">
+                    <td style="border-bottom: solid 0px green;"></td>
+                  {% else %}
+                    <tr>
+                    <td>{{ i.csr_heading }}</td>
+                  {% endif %}
+  								
+  								<td>
+  									{% if i.source_file != None %}
+
+  										{{ i.source_file }}
+
+  									{% else %}
+
+  										-
+
+  									{% endif %}
+  								</td>
+  								
+  								<td>
+                    {% if i.copy_headings != None %}
+
+                        {{ i.copy_headings }}
+
+                    {% else %}
+
+                      -
+
+                    {% endif %}
+
+                  </td>
+  							</tr>
+
+  						{% endfor %}
+  					</tbody>
+	    			
+    			 </table>
+
+           {% else %}
+
+                 <div class="no_res"> No Result Found</div>
+
+           {% endif %}
+      		</div>
+      	</div>
+  	</div>
+</div>
+
+{% endblock %}

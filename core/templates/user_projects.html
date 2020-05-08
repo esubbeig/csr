@@ -1,0 +1,104 @@
+{% extends 'user_home.html' %}
+
+{% load static %}
+
+{% block user_content %}
+    
+	<div class="container-fluid page-body-wrapper"> 
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4 class="mb-0 breadcrumb_">Projects</h4>
+                    <a href="{% url 'home' %}" class="bread__lnk">Home </a> / <label class="bread__lnk">Projects</label>
+                </div>
+
+                
+
+                <div>
+                     <button type="button" class="new_sub create__prj" data-href="{% url 'create_project' user.id %}" data-toggle="modal" data-target="#create_project_modal" id="project_create_form">
+                    <i class="btn__icons creproj__"></i><span> Create Project</span>
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+
+              {% if user_projects %}
+                <table class="table table-hover table-striped table-bordered" id="user_projects_tbl">
+            <thead class="thead-dark">
+                    <tr>
+                      <th>Project</th>
+                      <th>Protocol ID </th>
+                      <th class="no-sort">Therapeutic Area</th>
+                      <th class="no-sort">Phase</th>
+                      <th class="no-sort">Client Name </th>
+                      <th>Updated On</th> 
+                      <th class="no-sort">CSR Generated</th>
+                      <th class="no-sort"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="id_user_projects">
+                    {% for proj in user_projects %}
+                      <tr>
+                        <td>
+                          <a class="link_grid" href="{% url 'project_dashboard' user.id proj.project.id %}">{{ proj.project.project_name }}</a>
+                        </td>
+                        <td>{{ proj.project.protocol_id }}</td>
+                        <td>{{ proj.project.therapeutic_area.therapeutic_area }}</td>
+                        <td>{{ proj.project.phase }}</td> 
+                        <td>{{ proj.project.client.client_name }}</td>
+                        <td>{{ proj.project.updated_on|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if proj.project.generated == True %}
+                              Generated
+                            {% else %}
+                              Not Generated
+                            {% endif %}
+                        </td>
+                        <td>
+                          
+                          <a class="update-project" data-url="{% url 'edit_user_project' user.id proj.project.id %}">
+                            <img src="{% static 'images/edit__ic.png' %}" alt="" />
+                          </a>
+
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+
+                </table>
+
+              {% else %}
+
+                 <div class="no_res"> No Result Found</div>
+
+              {% endif %}
+
+      </div>
+  	</div>
+
+    <!-- Create Project Modal -->
+          <div class="modal fade" id="create_project_modal" tabindex="-1" role="dialog" aria-labelledby="create_project_modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+              </div>
+            </div>
+          </div>
+    <!-- Edit Project Modal -->
+        <div class="modal fade" id="modal-update-project" tabindex="-1" role="dialog" aria-labelledby="edit_project_modalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            </div>
+          </div>
+        </div>
+
+  </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style type="text/css">.navbar {display: none !important;}</style>
+<div class="container-fluid page-body-wrapper logn_bg">
+
+      <div class="main-panel h-100">
+        <div class="content-wrapper">
+  
+          <div class="row">
+            <div class="col-md-4 m-auto">
+                
+                     <div class="form___ wt_bg m-t-1">
+                      <form action="" method="POST">
+                        {% csrf_token %}
+
+                        <div class="logo__ow">
+                          <img src="{% static 'images/logo-clini.png' %}" alt="" >
+                          <h1 class="logo_header">CSR AUTOMATION</h1> </div>
+                        
+                          <h2>Login</h2>
+                          <h6>Enter your user name  & password to sign in </h6>
+                          <div class="form_wrp">
+                            
+                            {% if messages  %}
+                              {% for message in messages %}
+
+                                  <p class="text-danger">{{ message }}</p>
+
+                              {% endfor %}
+                            {% endif %}
+
+                            <input class="input_cn" type="text"  placeholder="User Name" name="username" autofocus required id="id_username">
+                           
+                             
+                            <div class="proj__info">
+                              <input class="input_cn" type="password"  placeholder="Password" name="password" required id="id_password">
+                            </div>
+
+                          </div> 
+                          
+                           <div class="form_wrp">
+                              <button class="frm_btn__ m-w-full" type="submit">LOGIN</button>
+                           </div>
+                           <a href="{% url 'forgot_password' %}"><i>Forgot Password ? </i></a>
+
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+    
+        </div>
+        <!-- content-wrapper ends -->
+ 
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+
+{% endblock %}
